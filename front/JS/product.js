@@ -16,9 +16,6 @@ async function getDatas() {
   document.querySelector('#description').innerHTML = data.description;
 
   // Boucle for of pour les options
-  // Dans la boucle il faut une constante pour créer la couleur avec tout le html
-
-  // Il faut selectionner la zone et afficher le contenu
   //Création boucle pour choix des couleurs
   for (let option of data.colors) {
     const color = `<option value="${option}">${option}</option>`;
@@ -26,6 +23,7 @@ async function getDatas() {
     document.querySelector('#colors').insertAdjacentHTML('beforeend', color);
   }
 }
+//Lancement de la fonction
 getDatas();
 // Ecoute au clic + selection html
 // Création fonction pour le localstorage
@@ -45,7 +43,9 @@ document.querySelector('#addToCart').addEventListener('click', () => {
 
   addToCart();
 });
+//Fonction ajout panier
 function addToCart() {
+  // Si le localstorage est rempli alors création d'un tableau cart
   const cart =
     localStorage.getItem('cart') != null ||
     localStorage.getItem('cart') != undefined
@@ -68,22 +68,21 @@ function addToCart() {
     name,
     quantity,
   };
-
+  // Condition si le tableau cart est vide alors ajout
   if (cart.length <= 0) {
     cart.push(product);
     localStorage.setItem('cart', JSON.stringify(cart));
     alert('Produit ajouté au panier');
     return;
   }
-
+  // Comparaison entre le tableau et l'id récuperer sur l'api et la couleur
   const index = cart.findIndex(
     (product) => product.id === productId && product.color === color
   );
-
+  //Mise a jour quantité
   if (index != -1) {
     // MEttre à jour le produit
     const newQuantity = quantity + cart[index].quantity;
-    console.log(newQuantity);
 
     if (newQuantity > 100) {
       alert('trop de produits');
