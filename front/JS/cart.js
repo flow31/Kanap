@@ -159,9 +159,6 @@ updateQuantity = () => {
       productInLocalStorage[n] = newLocalStorage;
       localStorage.setItem('cart', JSON.stringify(productInLocalStorage));
 
-      // Message de la mise à jour du panier
-      alert('Votre panier a bien été mis à jour !');
-
       // Actualisation de la quantité d'articles dans le panier
       totalArticles();
     });
