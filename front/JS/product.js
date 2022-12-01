@@ -85,9 +85,10 @@ function addToCart() {
     const newQuantity = quantity + cart[index].quantity;
 
     if (newQuantity > 100) {
-      alert('trop de produits');
+      alert('Trop de produits');
       return;
     }
+
     cart[index].quantity += quantity;
     localStorage.setItem('cart', JSON.stringify(cart));
     alert('La quantité du produit a été mise à jour');

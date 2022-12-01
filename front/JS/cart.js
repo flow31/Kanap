@@ -154,7 +154,14 @@ updateQuantity = () => {
         price: productInLocalStorage[n].price,
         quantity: itemWithNewQuantity,
       };
-
+      if (itemWithNewQuantity > 100) {
+        alert('Trop de produits');
+        return;
+      }
+      if (itemWithNewQuantity <= 0) {
+        alert('Quantité non valide');
+        return;
+      }
       // Nouvelles valeurs du localstorage
       productInLocalStorage[n] = newLocalStorage;
       localStorage.setItem('cart', JSON.stringify(productInLocalStorage));
