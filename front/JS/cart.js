@@ -10,9 +10,9 @@ async function getDatas() {
   showCart(datas);
 
   removeProduct();
-
+  totalArticles();
   updateQuantity();
-  // priceAmount();
+  // showPrice();
 }
 
 if (productInLocalStorage.length > 0) {
@@ -46,14 +46,14 @@ function showCart(datas) {
       </article>`;
 
     document
-      .querySelector('#cart__items')
+      .getElementById('cart__items')
       .insertAdjacentHTML('beforeend', product);
 
     totalArticles();
   }
 }
 function removeProduct() {
-  const deleteItem = document.querySelector('.deleteItem');
+  const deleteItem = document.getElementsByClassName('deleteItem');
 
   for (let a = 0; a < deleteItem.length; a++) {
     deleteItem[a].addEventListener('click', (event) => {
@@ -94,12 +94,12 @@ function totalArticles() {
   }
 
   // Attribue à totalQuantity la valeur de totalItems et l'afficher dans le DOM
-  const totalQuantity = document.querySelector('#totalQuantity');
-  totalQuantity.textContent = totalItems;
+  const totalQuantity = document.getElementById('totalQuantity');
+  totalQuantity.innerHTML = totalItems;
 }
 
 function updateQuantity() {
-  let itemQuantity = document.querySelector('.itemQuantity');
+  let itemQuantity = document.getElementsByClassName('itemQuantity');
 
   for (let n = 0; n < itemQuantity.length; n++) {
     itemQuantity[n].addEventListener('change', (event) => {
@@ -133,7 +133,14 @@ function updateQuantity() {
     });
   }
 }
-
+// function showPrice(datas) {
+//   const index = datas.findIndex(
+//     (product) => product._id === datas[index].price
+//   );
+//   const showPrice = document.querySelector('#totalPrice');
+//   showPrice.insertAdjacentHTML('beforeend', index);
+//   console.log(showPrice);
+// }
 // Gestion formulaire
 // Récupération des elements
 
