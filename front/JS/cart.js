@@ -136,18 +136,27 @@ function updateQuantity() {
   }
 }
 function getAllPrice(datas) {
+  let itemPriceChange = document.querySelector('.itemQuantity');
   let nbProduct = 0;
   let totalPrice = 0;
-  for (let data of productInLocalStorage) {
-    const index = datas.findIndex((product) => product._id === data.id);
-    nbProduct += parseInt(data.quantity);
-    totalPrice += parseInt(nbProduct * datas[index].price);
+  if (itemPriceChange) {
+    itemPriceChange.addEventListener('change', (event) => {
+      let nbProduct = 0;
+      let totalPrice = 0;
+      for (let data of productInLocalStorage) {
+        const index = datas.findIndex((product) => product._id === data.id);
+        if (datas[index] && datas[index].price) {
+          nbProduct += parseInt(data.quantity);
+          totalPrice += parseInt(nbProduct * datas[index].price);
+        }
+      }
+      // Affiche le total et nb produit
+      document.querySelector('#totalQuantity').innerHTML = nbProduct;
+      document.querySelector('#totalPrice').innerHTML = totalPrice
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    });
   }
-  // Affiche le total et nb produit
-  document.querySelector('#totalQuantity').innerHTML = nbProduct;
-  document.querySelector('#totalPrice').innerHTML = totalPrice
-    .toString()
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 }
 
 // Gestion formulaire
