@@ -12,7 +12,7 @@ async function getDatas() {
   removeProduct();
   totalArticles();
   updateQuantity();
-  // showPrice();
+  getAllPrice(datas);
 }
 
 if (productInLocalStorage.length > 0) {
@@ -50,6 +50,7 @@ function showCart(datas) {
       .insertAdjacentHTML('beforeend', product);
 
     totalArticles();
+    getAllPrice(datas);
   }
 }
 function removeProduct() {
@@ -130,17 +131,25 @@ function updateQuantity() {
 
       // Actualisation de la quantité d'articles dans le panier
       totalArticles();
+      getAllPrice(datas);
     });
   }
 }
-// function showPrice(datas) {
-//   const index = datas.findIndex(
-//     (product) => product._id === datas[index].price
-//   );
-//   const showPrice = document.querySelector('#totalPrice');
-//   showPrice.insertAdjacentHTML('beforeend', index);
-//   console.log(showPrice);
-// }
+function getAllPrice(datas) {
+  let nbProduct = 0;
+  let totalPrice = 0;
+  for (let data of productInLocalStorage) {
+    const index = datas.findIndex((product) => product._id === data.id);
+    nbProduct += parseInt(data.quantity);
+    totalPrice += parseInt(nbProduct * datas[index].price);
+  }
+  // Affiche le total et nb produit
+  document.querySelector('#totalQuantity').innerHTML = nbProduct;
+  document.querySelector('#totalPrice').innerHTML = totalPrice
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+
 // Gestion formulaire
 // Récupération des elements
 
