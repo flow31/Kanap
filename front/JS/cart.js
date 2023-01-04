@@ -1,23 +1,35 @@
+// Récupère les données de l'objet "cart" dans le LocalStorage obtenir un objet JavaScript
 let productInLocalStorage = JSON.parse(localStorage.getItem('cart'));
+// Crée un tableau vide qui sera rempli avec les données des produits plus tard
 let datas = [];
 
-// console.log(productInLocalStorage);
-
+// Fonction asynchrone pour récupérer les données des produits à partir de l'API
 async function getDatas() {
+  // Utilise la méthode fetch pour récupérer les données de l'API
   const res = await fetch('http://localhost:3000/api/products/');
+  // Transforme les données en un objet JSON
   const datas = await res.json();
 
+  // Appelle plusieurs fonctions en utilisant les données des produits
   showCart(datas);
+  removeProduct();
+  updateQuantity(datas);
+  getAllPrice(datas);
+  totalArticles();
 }
 
+// Si le panier dans le LocalStorage contient au moins un produit, appelle la fonction getDatas()
 if (productInLocalStorage.length > 0) {
   getDatas();
 }
 
+// Affiche les produits du panier dans la page HTML
 function showCart(datas) {
+  // Pour chaque produit dans le panier (productInLocalStorage)
   for (let data of productInLocalStorage) {
+    // Trouve l'index du produit dans le tableau des données de tous les produits (datas)
     const index = datas.findIndex((product) => product._id === data.id);
-    // console.log(index);
+    // Crée une chaîne de caractères qui représente le HTML de chaque produit
     const product = `<article class="cart__item" data-id="${data.id}" data-color="${data.color}">
         <div class="cart__item__img">
           ${data.image}
@@ -40,67 +52,80 @@ function showCart(datas) {
         </div>
       </article>`;
 
+    // Insère le HTML du produit dans la page HTML
     document
       .getElementById('cart__items')
       .insertAdjacentHTML('beforeend', product);
   }
-  getAllPrice(datas);
-  totalArticles();
 }
+
+// Supprime un produit du panier lorsque le bouton "Supprimer" est cliqué
 function removeProduct() {
+  // Récupère tous les éléments HTML avec la classe "deleteItem"
   const deleteItem = document.getElementsByClassName('deleteItem');
 
+  // Pour chaque élément "Supprimer"
   for (let a = 0; a < deleteItem.length; a++) {
+    // Ajoute un gestionnaire d'événement "click" à l'élément "Supprimer"
     deleteItem[a].addEventListener('click', (event) => {
+      // Empêche le comportement par défaut du lien (rechargement de la page)
       event.preventDefault();
 
-      // Enregistrement de l'id et de la couleur séléctionnée par le bouton supprimer
+      // Enregistre l'ID et la couleur du produit à supprimer
       let deleteId = productInLocalStorage[a].id;
       let deleteColor = productInLocalStorage[a].color;
 
-      // Sélection des éléments à garder avec la méthode .filter et suppression de l'élément cliqué
+      // Filtre les produits à conserver dans le panier et supprime le produit cliqué
       productInLocalStorage = productInLocalStorage.filter(
         (element) => element.id !== deleteId || element.color !== deleteColor
       );
 
-      // Mise à jour du local storage avec les produits restants
+      // Met à jour le LocalStorage avec les produits restants
       localStorage.setItem('cart', JSON.stringify(productInLocalStorage));
 
-      // Confirmation de la suppression du produit
+      // Affiche un message de confirmation de la suppression du produit
       alert('Votre article a bien été retiré de votre panier !');
 
-      // Actualiser le contenu du panier
+      // Actualise la page du panier
       window.location.href = 'cart.html';
     });
   }
 }
 
+// Calcule le nombre total d'articles dans le panier
 function totalArticles() {
   let totalItems = 0;
 
+  // Pour chaque produit dans le panier
   for (e in productInLocalStorage) {
-    // Analyse et converti la valeur 'quantity' dans le localstorage en une chaîne, et renvoie un entier
+    // Convertit la quantité du produit en entier et l'ajoute à la variable totalItems
     const newQuantity = parseInt(productInLocalStorage[e].quantity);
-
-    // Attribue la valeur retournée par parseInt à la variable totalItems
     totalItems += newQuantity;
   }
 
-  // Attribue à totalQuantity la valeur de totalItems et l'afficher dans le DOM
+  // Récupère l'élément HTML avec l'ID "totalQuantity" et affiche le nombre total d'articles
   const totalQuantity = document.getElementById('totalQuantity');
   totalQuantity.innerHTML = totalItems;
-  updateQuantity();
 }
 
-function updateQuantity() {
+// Met à jour la quantité d'un produit dans le panier lorsque l'utilisateur modifie la valeur du champ de quantité
+function updateQuantity(datas) {
+  // Récupère tous les éléments HTML avec la classe "itemQuantity"
+
   let itemQuantity = document.querySelectorAll('.itemQuantity');
+  // Pour chaque élément "itemQuantity"
 
   for (let n = 0; n < itemQuantity.length; n++) {
+    // Ajoute un gestionnaire d'événement "change" à l'élément "itemQuantity"
+
     itemQuantity[n].addEventListener('change', (event) => {
+      // Empêche le comportement par défaut du formulaire (rechargement de la page)
+
       event.preventDefault();
 
-      // Initialisation d'un nouveau tableau avec la nouvelle quantité
+      // Récupère la nouvelle quantité entrée par l'utilisateur
       let itemWithNewQuantity = itemQuantity[n].value;
+      // Crée un nouvel objet avec les nouvelles données du produit (ID, quantité, etc.)
 
       const newLocalStorage = {
         id: productInLocalStorage[n].id,
@@ -108,12 +133,16 @@ function updateQuantity() {
         alt: productInLocalStorage[n].alt,
         name: productInLocalStorage[n].name,
         color: productInLocalStorage[n].color,
-        quantity: itemWithNewQuantity,
+        quantity: parseInt(itemWithNewQuantity),
       };
+      // Si la quantité est supérieure à 100, affiche un message d'erreur
+
       if (itemWithNewQuantity > 100) {
         alert('Trop de produits');
         return;
       }
+      // Si la quantité est inférieure ou égale à 0, affiche un message d'erreur
+
       if (itemWithNewQuantity <= 0) {
         alert('Quantité non valide');
         return;
@@ -122,34 +151,41 @@ function updateQuantity() {
       productInLocalStorage[n] = newLocalStorage;
       localStorage.setItem('cart', JSON.stringify(productInLocalStorage));
       totalArticles();
+      getAllPrice(datas);
     });
   }
 }
+
 function getAllPrice(datas) {
-  let nbProduct = 0;
-  let totalPrice = 0;
-  for (let data of productInLocalStorage) {
-    const index = datas.findIndex((product) => product._id === data.id);
-    nbProduct += parseInt(data.quantity);
-    totalPrice += parseInt(nbProduct * datas[index].price);
-  }
-  // Affiche le total et nb produit
+  // Utiliser reduce pour réduire productInLocalStorage en une seule valeur
 
-  document.querySelector('#totalPrice').innerHTML = totalPrice;
+  const result = productInLocalStorage.reduce(
+    (acc, currentValue) => {
+      const index = datas.findIndex(
+        (product) => product._id === currentValue.id
+      );
+      // Accumuler la quantité et le prix du produit courant
+      acc.nbProduct += parseInt(currentValue.quantity);
+      acc.totalPrice += parseInt(currentValue.quantity * datas[index].price);
+      return acc;
+    },
+    { nbProduct: 0, totalPrice: 0 }
+  ); // Valeur initiale de l'accumulateur
+
+  // Affiche le nombre total de produits et le prix total
+
+  document.querySelector('#totalPrice').innerHTML = result.totalPrice;
 }
-
-// Gestion formulaire
-// Récupération des elements
-
+// Récupère les éléments HTML avec les IDs "firstName", "lastName", "address", "city" et "email"
 const firstName = document.querySelector('#firstName');
 const lastName = document.querySelector('#lastName');
 const address = document.querySelector('#address');
 const city = document.querySelector('#city');
 const email = document.querySelector('#email');
 
-// Event
+// Ajoute un gestionnaire d'événement "click" à l'élément HTML avec l'ID "order"
 document.querySelector('#order').addEventListener('click', () => {
-  // Verification
+  // Lance les fonctions de vérification du formulaire
   firstNameValid();
   lastNameValid();
   addressValid();
@@ -159,58 +195,109 @@ document.querySelector('#order').addEventListener('click', () => {
 
 // Fonctions formulaire
 
+// Vérifie que le champ "Prénom" du formulaire est valide
 function firstNameValid() {
+  // Récupère la valeur du champ "Prénom" et enlève les espaces en début et fin de chaîne
   const firstNameValue = firstName.value.trim();
+  // Récupère l'élément HTML avec l'ID "firstNameErrorMsg"
   let firstNameMessage = document.querySelector('#firstNameErrorMsg');
+
+  // Si la valeur du champ "Prénom" est vide
   if (firstNameValue === '') {
+    // Affiche un message d'erreur
     firstNameMessage.innerHTML = 'Ne peut pas être vide';
-  } else if (!firstNameValue.match(/^[a-zA-Z-\s]+$/)) {
+  }
+  // Si la valeur du champ "Prénom" ne correspond pas au motif de caractères alphabétiques et d'espaces
+  else if (!firstNameValue.match(/^[a-zA-Z-\s]+$/)) {
+    // Affiche un message d'erreur
     firstNameMessage.innerHTML = 'Ne doit pas contenir de chiffres';
-  } else {
+  }
+  // Si aucune erreur n'est détectée
+  else {
+    // Efface le message d'erreur
     firstNameMessage.innerHTML = '';
   }
 }
+
+// Vérifie que le champ "Nom" du formulaire est valide
 function lastNameValid() {
+  // Récupère la valeur du champ "Nom" et enlève les espaces en début et fin de chaîne
   const lastNameValue = lastName.value.trim();
+  // Récupère l'élément HTML avec l'ID "lastNameErrorMsg"
   let lastNameMessage = document.querySelector('#lastNameErrorMsg');
+
+  // Si la valeur du champ "Nom" est vide
   if (lastNameValue === '') {
+    // Affiche un message d'erreur
     lastNameMessage.innerHTML = 'Ne peut pas être vide';
-  } else if (!lastNameValue.match(/^[a-zA-Z-\s]+$/)) {
+  }
+  // Si la valeur du champ "Nom" ne correspond pas au motif de caractères alphabétiques et d'espaces
+  else if (!lastNameValue.match(/^[a-zA-Z-\s]+$/)) {
+    // Affiche un message d'erreur
     lastNameMessage.innerHTML = 'Ne doit pas contenir de chiffres';
-  } else {
+  }
+  // Si aucune erreur n'est détectée
+  else {
+    // Efface le message d'erreur
     lastNameMessage.innerHTML = '';
   }
 }
+
+// Vérifie que le champ "Adresse" du formulaire est valide
 function addressValid() {
+  // Récupère la valeur du champ "Adresse" et enlève les espaces en début et fin de chaîne
   const addressNameValue = address.value.trim();
+  // Récupère l'élément HTML avec l'ID "addressErrorMsg"
   let addressNameMessage = document.querySelector('#addressErrorMsg');
+
+  // Si la valeur du champ "Adresse" est vide
   if (addressNameValue === '') {
+    // Affiche un message d'erreur
     addressNameMessage.innerHTML = 'Ne peut pas être vide';
-  } else {
-    addressMessage.innerHTML = '';
+  }
+  // Si aucune erreur n'est détectée
+  else {
+    // Efface le message d'erreur
+    addressNameMessage.innerHTML = '';
   }
 }
+
 function cityValid() {
+  // Récupère la valeur du champ de saisie de la ville et enlève les espaces vides en début et fin de chaîne
   const cityNameValue = city.value.trim();
+  // Récupère l'élément HTML qui affiche le message d'erreur pour le champ de saisie de la ville
   let cityNameMessage = document.querySelector('#cityErrorMsg');
+  // Si la valeur du champ de saisie de la ville est vide
   if (cityNameValue === '') {
+    // Affiche un message d'erreur indiquant que le champ de saisie de la ville ne peut pas être vide
     cityNameMessage.innerHTML = 'Ne peut pas être vide';
   } else {
+    // Si la valeur du champ de saisie de la ville n'est pas vide, efface le message d'erreur
     cityNameMessage.innerHTML = '';
   }
 }
+
 function emailValid() {
+  // Récupère la valeur du champ de saisie de l'email et enlève les espaces vides en début et fin de chaîne
   const emailValue = email.value.trim();
+  // Récupère l'élément HTML qui affiche le message d'erreur pour le champ de saisie de l'email
   let emailMessage = document.querySelector('#emailErrorMsg');
+  // Si la valeur du champ de saisie de l'email est vide
   if (emailValue === '') {
+    // Affiche un message d'erreur indiquant que le champ de saisie de l'email ne peut pas être vide
     emailMessage.innerHTML = 'Ne peut pas être vide';
+    // Sinon, si la valeur du champ de saisie de l'email ne correspond pas au format d'un email valide
   } else if (
     !emailValue.match(
       /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     )
   ) {
+    // Affiche un message d'erreur indiquant que l'email est non conforme
     emailMessage.innerHTML = 'Email non conforme';
   } else {
+    // Si la valeur du champ de saisie de l'email est valide, efface le message d'erreur
     emailMessage.innerHTML = '';
   }
 }
+
+function sendOrder() {}
