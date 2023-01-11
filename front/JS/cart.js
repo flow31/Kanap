@@ -1,4 +1,4 @@
-// Récupère les données de l'objet "cart" dans le LocalStorage obtenir un objet JavaScript
+// Récupère les données de l'objet "cart" dans le LocalStorage pour obtenir un objet JavaScript
 let productInLocalStorage = JSON.parse(localStorage.getItem('cart'));
 // Crée un tableau vide qui sera rempli avec les données des produits plus tard
 let datas = [];
@@ -68,7 +68,7 @@ function removeProduct() {
   for (let a = 0; a < deleteItem.length; a++) {
     // Ajoute un gestionnaire d'événement "click" à l'élément "Supprimer"
     deleteItem[a].addEventListener('click', (event) => {
-      // Empêche le comportement par défaut du lien (rechargement de la page)
+      // Empêche le comportement par défaut (rechargement de la page)
       event.preventDefault();
 
       // Enregistre l'ID et la couleur du produit à supprimer
@@ -119,7 +119,7 @@ function updateQuantity(datas) {
     // Ajoute un gestionnaire d'événement "change" à l'élément "itemQuantity"
 
     itemQuantity[n].addEventListener('change', (event) => {
-      // Empêche le comportement par défaut du formulaire (rechargement de la page)
+      // Empêche le comportement par défaut (rechargement de la page)
 
       event.preventDefault();
 
@@ -184,7 +184,8 @@ const city = document.querySelector('#city');
 const email = document.querySelector('#email');
 
 // Ajoute un gestionnaire d'événement "click" à l'élément HTML avec l'ID "order"
-document.querySelector('#order').addEventListener('click', () => {
+const sendOrder = document.getElementById('order');
+sendOrder.addEventListener('click', () => {
   // Lance les fonctions de vérification du formulaire
   firstNameValid();
   lastNameValid();
@@ -193,14 +194,11 @@ document.querySelector('#order').addEventListener('click', () => {
   emailValid();
 });
 
-// Fonctions formulaire
-
 // Vérifie que le champ "Prénom" du formulaire est valide
 function firstNameValid() {
-  // Récupère la valeur du champ "Prénom" et enlève les espaces en début et fin de chaîne
-  const firstNameValue = firstName.value.trim();
   // Récupère l'élément HTML avec l'ID "firstNameErrorMsg"
   let firstNameMessage = document.querySelector('#firstNameErrorMsg');
+  const firstNameValue = firstName.value.trim();
 
   // Si la valeur du champ "Prénom" est vide
   if (firstNameValue === '') {
@@ -221,10 +219,9 @@ function firstNameValid() {
 
 // Vérifie que le champ "Nom" du formulaire est valide
 function lastNameValid() {
-  // Récupère la valeur du champ "Nom" et enlève les espaces en début et fin de chaîne
-  const lastNameValue = lastName.value.trim();
   // Récupère l'élément HTML avec l'ID "lastNameErrorMsg"
   let lastNameMessage = document.querySelector('#lastNameErrorMsg');
+  const lastNameValue = lastName.value.trim();
 
   // Si la valeur du champ "Nom" est vide
   if (lastNameValue === '') {
@@ -245,10 +242,9 @@ function lastNameValid() {
 
 // Vérifie que le champ "Adresse" du formulaire est valide
 function addressValid() {
-  // Récupère la valeur du champ "Adresse" et enlève les espaces en début et fin de chaîne
-  const addressNameValue = address.value.trim();
   // Récupère l'élément HTML avec l'ID "addressErrorMsg"
   let addressNameMessage = document.querySelector('#addressErrorMsg');
+  const addressNameValue = address.value.trim();
 
   // Si la valeur du champ "Adresse" est vide
   if (addressNameValue === '') {
@@ -263,10 +259,10 @@ function addressValid() {
 }
 
 function cityValid() {
-  // Récupère la valeur du champ de saisie de la ville et enlève les espaces vides en début et fin de chaîne
-  const cityNameValue = city.value.trim();
   // Récupère l'élément HTML qui affiche le message d'erreur pour le champ de saisie de la ville
   let cityNameMessage = document.querySelector('#cityErrorMsg');
+  const cityNameValue = city.value.trim();
+
   // Si la valeur du champ de saisie de la ville est vide
   if (cityNameValue === '') {
     // Affiche un message d'erreur indiquant que le champ de saisie de la ville ne peut pas être vide
@@ -278,10 +274,10 @@ function cityValid() {
 }
 
 function emailValid() {
-  // Récupère la valeur du champ de saisie de l'email et enlève les espaces vides en début et fin de chaîne
-  const emailValue = email.value.trim();
   // Récupère l'élément HTML qui affiche le message d'erreur pour le champ de saisie de l'email
   let emailMessage = document.querySelector('#emailErrorMsg');
+  const emailValue = email.value.trim();
+
   // Si la valeur du champ de saisie de l'email est vide
   if (emailValue === '') {
     // Affiche un message d'erreur indiquant que le champ de saisie de l'email ne peut pas être vide
@@ -300,4 +296,66 @@ function emailValid() {
   }
 }
 
-function sendOrder() {}
+// Gestion de la soumission de la commande
+sendOrder.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  // Récupération des produits dans le panier
+  let products = JSON.parse(localStorage.getItem('cart'));
+
+  // Si le panier est vide, affichage d'une alerte
+  if (products === null || products.length < 1) {
+    alert(
+      'Votre panier est vide, veuillez ajouter des articles pour les commander.'
+    );
+    return;
+  }
+
+  // Préparation de l'objet de commande
+  const productsId = [];
+  products.forEach((product) => {
+    productsId.push(product.id);
+  });
+  const order = {
+    contact: {
+      firstName: firstName.value,
+      lastName: lastName.value,
+      address: address.value,
+      city: city.value,
+      email: email.value,
+    },
+    products: productsId,
+  };
+  // Envoi de la commande au serveur
+  orderProduct(order);
+});
+
+// Fonction d'envoi de la commande et des informations de contact
+function orderProduct(order) {
+  // Appel de l'API avec la méthode POST
+  fetch('http://localhost:3000/api/products/order', {
+    method: 'POST',
+    // Indication à l'API que les données envoyées sont au format JSON
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    // Envoi de l'objet JSON
+    body: JSON.stringify(order),
+  })
+    .then(function (res) {
+      // Vérification que la réponse est OK
+      if (res.ok) {
+        return res.json();
+      }
+    })
+    // Récupération de l'identifiant de commande dans la réponse
+    .then(function (value) {
+      window.location = `./confirmation.html?orderId=${value.orderId}`;
+      localStorage.clear();
+    })
+    // Gestion d'une erreur lors de l'appel de l'API
+    .catch(function (err) {
+      alert("Votre commande n'a pas pu être envoyée");
+    });
+}
