@@ -29,7 +29,7 @@ function showCart(datas) {
   for (let data of productInLocalStorage) {
     // Trouve l'index du produit dans le tableau des données de tous les produits (datas)
     const index = datas.findIndex((product) => product._id === data.id);
-    // Crée une chaîne de caractères qui représente le HTML de chaque produit
+    // Affichage dans le HTML
     const product = `<article class="cart__item" data-id="${data.id}" data-color="${data.color}">
         <div class="cart__item__img">
           ${data.image}
