@@ -282,10 +282,11 @@ function emailValid() {
   if (emailValue === '') {
     // Affiche un message d'erreur indiquant que le champ de saisie de l'email ne peut pas être vide
     emailMessage.innerHTML = 'Ne peut pas être vide';
+
     // Sinon, si la valeur du champ de saisie de l'email ne correspond pas au format d'un email valide
   } else if (
     !emailValue.match(
-      /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     )
   ) {
     // Affiche un message d'erreur indiquant que l'email est non conforme
@@ -326,8 +327,16 @@ sendOrder.addEventListener('click', function (e) {
     },
     products: productsId,
   };
-  // Envoi de la commande au serveur
-  orderProduct(order);
+  if (
+    firstNameValid ||
+    lastNameValid ||
+    addressValid ||
+    cityValid ||
+    emailValid
+  ) {
+    // Envoi de la commande au serveur
+    orderProduct(order);
+  }
 });
 
 // Fonction d'envoi de la commande et des informations de contact
