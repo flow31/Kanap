@@ -9,17 +9,19 @@ async function getDatas() {
   const data = await res.json();
 
   // Mise à jour du titre de la page
-  document.querySelector('title').innerHTML = data.name;
+  document.querySelector('title').textContent = data.name;
 
   // Mise à jour de l'image du produit
-  document.querySelector(
-    '.item__img'
-  ).innerHTML = `<img src="${data.imageUrl}" alt="${data.altTxt}">`;
+  let itemParent = document.getElementsByClassName('item__img');
+  let image = document.createElement('img');
+  image.src = data.imageUrl;
+  image.alt = data.altTxt;
+  itemParent[0].appendChild(image);
 
   // Mise à jour du nom, du prix et de la description du produit
-  document.querySelector('#title').innerHTML = data.name;
-  document.querySelector('#price').innerHTML = data.price;
-  document.querySelector('#description').innerHTML = data.description;
+  document.querySelector('#title').textContent = data.name;
+  document.querySelector('#price').textContent = data.price;
+  document.querySelector('#description').textContent = data.description;
 
   // Mise à jour des options de couleur du produit
   for (let option of data.colors) {
@@ -66,7 +68,7 @@ function addToCart() {
   // Récupération des données du produit
   const color = document.querySelector('#colors').value;
   const quantity = parseInt(document.querySelector('#quantity').value);
-  const name = document.querySelector('#title').innerHTML;
+  const name = document.querySelector('#title').textContent;
   const image = document.querySelector('.item__img').innerHTML;
   const product = {
     id: productId,

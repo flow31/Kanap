@@ -105,7 +105,7 @@ function totalArticles() {
 
   // Récupère l'élément HTML avec l'ID "totalQuantity" et affiche le nombre total d'articles
   const totalQuantity = document.getElementById('totalQuantity');
-  totalQuantity.innerHTML = totalItems;
+  totalQuantity.textContent = totalItems;
 }
 
 // Met à jour la quantité d'un produit dans le panier lorsque l'utilisateur modifie la valeur du champ de quantité
@@ -174,7 +174,7 @@ function getAllPrice(datas) {
 
   // Affiche le nombre total de produits et le prix total
 
-  document.querySelector('#totalPrice').innerHTML = result.totalPrice;
+  document.querySelector('#totalPrice').textContent = result.totalPrice;
 }
 // Récupère les éléments HTML avec les IDs "firstName", "lastName", "address", "city" et "email"
 const firstName = document.querySelector('#firstName');
@@ -203,17 +203,17 @@ function firstNameValid() {
   // Si la valeur du champ "Prénom" est vide
   if (firstNameValue === '') {
     // Affiche un message d'erreur
-    firstNameMessage.innerHTML = 'Ne peut pas être vide';
+    firstNameMessage.textContent = 'Ne peut pas être vide';
   }
   // Si la valeur du champ "Prénom" ne correspond pas au motif de caractères alphabétiques et d'espaces
   else if (!firstNameValue.match(/^[a-zA-Z-\s]+$/)) {
     // Affiche un message d'erreur
-    firstNameMessage.innerHTML = 'Ne doit pas contenir de chiffres';
+    firstNameMessage.textContent = 'Ne doit pas contenir de chiffres';
   }
   // Si aucune erreur n'est détectée
   else {
     // Efface le message d'erreur
-    firstNameMessage.innerHTML = '';
+    firstNameMessage.textContent = '';
   }
 }
 
@@ -226,17 +226,17 @@ function lastNameValid() {
   // Si la valeur du champ "Nom" est vide
   if (lastNameValue === '') {
     // Affiche un message d'erreur
-    lastNameMessage.innerHTML = 'Ne peut pas être vide';
+    lastNameMessage.textContent = 'Ne peut pas être vide';
   }
   // Si la valeur du champ "Nom" ne correspond pas au motif de caractères alphabétiques et d'espaces
   else if (!lastNameValue.match(/^[a-zA-Z-\s]+$/)) {
     // Affiche un message d'erreur
-    lastNameMessage.innerHTML = 'Ne doit pas contenir de chiffres';
+    lastNameMessage.textContent = 'Ne doit pas contenir de chiffres';
   }
   // Si aucune erreur n'est détectée
   else {
     // Efface le message d'erreur
-    lastNameMessage.innerHTML = '';
+    lastNameMessage.textContent = '';
   }
 }
 
@@ -249,12 +249,12 @@ function addressValid() {
   // Si la valeur du champ "Adresse" est vide
   if (addressNameValue === '') {
     // Affiche un message d'erreur
-    addressNameMessage.innerHTML = 'Ne peut pas être vide';
+    addressNameMessage.textContent = 'Ne peut pas être vide';
   }
   // Si aucune erreur n'est détectée
   else {
     // Efface le message d'erreur
-    addressNameMessage.innerHTML = '';
+    addressNameMessage.textContent = '';
   }
 }
 
@@ -266,10 +266,10 @@ function cityValid() {
   // Si la valeur du champ de saisie de la ville est vide
   if (cityNameValue === '') {
     // Affiche un message d'erreur indiquant que le champ de saisie de la ville ne peut pas être vide
-    cityNameMessage.innerHTML = 'Ne peut pas être vide';
+    cityNameMessage.textContent = 'Ne peut pas être vide';
   } else {
     // Si la valeur du champ de saisie de la ville n'est pas vide, efface le message d'erreur
-    cityNameMessage.innerHTML = '';
+    cityNameMessage.textContent = '';
   }
 }
 
@@ -281,7 +281,7 @@ function emailValid() {
   // Si la valeur du champ de saisie de l'email est vide
   if (emailValue === '') {
     // Affiche un message d'erreur indiquant que le champ de saisie de l'email ne peut pas être vide
-    emailMessage.innerHTML = 'Ne peut pas être vide';
+    emailMessage.textContent = 'Ne peut pas être vide';
 
     // Sinon, si la valeur du champ de saisie de l'email ne correspond pas au format d'un email valide
   } else if (
@@ -290,10 +290,10 @@ function emailValid() {
     )
   ) {
     // Affiche un message d'erreur indiquant que l'email est non conforme
-    emailMessage.innerHTML = 'Email non conforme';
+    emailMessage.textContent = 'Email non conforme';
   } else {
     // Si la valeur du champ de saisie de l'email est valide, efface le message d'erreur
-    emailMessage.innerHTML = '';
+    emailMessage.textContent = '';
   }
 }
 

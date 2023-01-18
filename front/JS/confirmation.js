@@ -5,4 +5,4 @@ let url = new URL(onPageUrl);
 // Récupère la valeur de la propriété "orderId" dans l'URL
 let id = url.searchParams.get('orderId');
 // Affecte la valeur de la variable id à l'élément HTML ayant l'identifiant "orderId"
-document.getElementById('orderId').innerText = id;
+document.getElementById('orderId').textContent = id;
