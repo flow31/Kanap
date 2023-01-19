@@ -9,7 +9,10 @@ async function getDatas() {
   const data = await res.json();
 
   // Mise à jour du titre de la page
-  document.querySelector('title').textContent = data.name;
+  const pageTitle = document.querySelector('title');
+  const newTitle = document.createElement('title');
+  newTitle.textContent = data.name;
+  pageTitle.replaceWith(newTitle);
 
   // Mise à jour de l'image du produit
   let itemParent = document.getElementsByClassName('item__img');
@@ -19,9 +22,18 @@ async function getDatas() {
   itemParent[0].appendChild(image);
 
   // Mise à jour du nom, du prix et de la description du produit
-  document.querySelector('#title').textContent = data.name;
-  document.querySelector('#price').textContent = data.price;
-  document.querySelector('#description').textContent = data.description;
+  const title = document.createElement('h1');
+  title.textContent = data.name;
+  document.querySelector('#title').appendChild(title);
+
+  const price = document.createElement('span');
+  price.id = 'price';
+  price.textContent = data.price;
+  document.querySelector('#price').appendChild(price);
+
+  const description = document.createElement('p');
+  description.textContent = data.description;
+  document.querySelector('#description').appendChild(description);
 
   // Mise à jour des options de couleur du produit
   for (let option of data.colors) {
